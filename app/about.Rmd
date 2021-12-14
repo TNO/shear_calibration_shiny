@@ -1,0 +1,33 @@
+---
+title: "About"
+output: html_document
+---
+
+## About
+
+Because we have more results than it could be put on a single plot and <a href="https://www.r-project.org/" target="_blank">R</a> is fun an easy.
+
+Created by:
+<div style="margin-left: 1em;">  
+  Árpád Rózsás <br>   
+  Arthur Slobbe
+</div>
+<br>
+
+<p> Contact: 
+<script language="JavaScript">
+var username = "arpad.rozsas";
+var hostname = "tno.nl";
+var linktext = username + "@" + hostname ;
+document.write("<a href='" + "mail" + "to:" + username + "@" + hostname + "'>" + linktext + "</a>");
+</script>
+</p>
+
+
+Licence: <a href="https://en.wikipedia.org/wiki/MIT_License" target="_blank">MIT</a>
+
+***
+
+The main packages used for this app: 
+<a href="http://shiny.rstudio.com/" target="_blank">shiny</a>,
+<a href="https://ggplot2.tidyverse.org/" target="_blank">ggplot2</a>.
