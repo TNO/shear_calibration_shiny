@@ -11,7 +11,7 @@ ID = ""
 
 beta_t = 4.7
 
-data_dir = "../data/"
+data_dir = "data/"
 # variables = c('load_comb', 'rho', 'chi1', 'chi2') fpath = paste('beta', ID, '.csv',
 # sep = '') dfb = read.csv(fpath) dfb = as.tibble(dfb)
 
