@@ -1,9 +1,6 @@
 name: Deploy shiny app on shinyapps.io
 on:
   push:
-  
-
-name: deploy-shiny
 
 jobs:
   deploy-shiny:
