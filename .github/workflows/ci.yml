@@ -1,0 +1,22 @@
+name: Deploy shiny app on shinyapps.io
+on:
+  push:
+  
+
+name: deploy-shiny
+
+jobs:
+  deploy-shiny:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: r-lib/actions/setup-r@master
+      - name: Install rsconnect
+        run: |
+          install.packages('rsconnect')
+        shell: Rscript {0}
+      - name: shinyapps.io credentials
+        run: |
+          Rscript -e "rsconnect::setAccountInfo(name='rozsasarpi', token=${{secrets.SHINYAPPS_TOKEN}}, secret=${{secrets.SHINYAPPS_SECRET}})"
+          Rscript -e "rsconnect::deployApp(appName = 'visualize_calibration_results')"
+        shell: Rscript {0}
