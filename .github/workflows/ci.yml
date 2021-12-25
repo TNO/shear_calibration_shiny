@@ -10,7 +10,7 @@ jobs:
       - uses: r-lib/actions/setup-r@master
       - name: Install rsconnect
         run: |
-          install.packages('rsconnect')
+          install.packages(c('shiny', 'rsconnect'))
         shell: Rscript {0}
       - name: shinyapps.io credentials
         run: |
