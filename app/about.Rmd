@@ -5,7 +5,7 @@ output: html_document
 
 ## About
 
-Because we have more results than it could be put on a single plot and <a href="https://www.r-project.org/" target="_blank">R</a> is fun an easy.
+Because we have more results than it could be put on a single plot.
 
 Created by:
 <div style="margin-left: 1em;">  
