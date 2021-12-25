@@ -19,4 +19,3 @@ jobs:
         run: |
           Rscript -e "rsconnect::setAccountInfo(name='rozsasarpi', token=${{secrets.SHINYAPPS_TOKEN}}, secret=${{secrets.SHINYAPPS_SECRET}})"
           Rscript -e "rsconnect::deployApp(appName = 'visualize_calibration_results')"
-        shell: Rscript {0}
