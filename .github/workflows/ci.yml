@@ -27,5 +27,5 @@ jobs:
       - name: Authenticate and deploy on shinyapps.io
         run: |
           rsconnect::setAccountInfo(name='rozsasarpi', token=${{secrets.SHINYAPPS_TOKEN}}, secret=${{secrets.SHINYAPPS_SECRET}})
-          rsconnect::deployApp(appDir='app/', appName = 'visualize_calibration_results' appFileManifest = 'files_to_deploy.txt')
+          rsconnect::deployApp(appDir='app/', appName = 'visualize_calibration_results', appFileManifest = 'files_to_deploy.txt')
         shell: Rscript {0}
