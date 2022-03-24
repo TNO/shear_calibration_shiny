@@ -26,11 +26,11 @@ shinyServer(function(input, output, session) {
             fpath = paste("beta", ID, ".csv", sep = "")
             print(file.exists(fpath))
             df = read.csv(fpath)
-            df = as_tibble(df)
+            # df = as_tibble(df)
 
         } else {
             df = read.csv(input$beta_csv$datapath)
-            df = as_tibble(df)
+            # df = as_tibble(df)
         }
         
         print(df)
