@@ -26,6 +26,7 @@ shinyServer(function(input, output, session) {
     df_beta <- reactive({
         if (is.null(input$beta_csv)) {
             fpath = file.path(data_dir, paste("beta", ID, ".csv", sep = ""))
+            print(file.exists(fpath))
             df = read.csv(fpath)
             df = as_tibble(df)
 
