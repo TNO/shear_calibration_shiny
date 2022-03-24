@@ -1,6 +1,6 @@
 *.csv
-!app/data/beta.csv
-!app/data/alpha2.csv
+!app/beta.csv
+!app/alpha2.csv
 
 # renv
 renv/

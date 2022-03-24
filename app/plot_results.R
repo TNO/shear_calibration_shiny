@@ -17,8 +17,6 @@ source("plotting_utils.R")
 # =================================================================
 ID = ""
 
-data_dir = "data"
-
 show_title = FALSE
 dpi = 400
 
@@ -26,12 +24,12 @@ dpi = 400
 # Pre-process
 # =================================================================
 
-fpath = paste(file.path(data_dir, paste("beta", ID, ".csv", sep = "")))
+fpath = paste("beta", ID, ".csv", sep = "")
 df_beta = read.csv(fpath)
 df_beta = as_tibble(df_beta)
 df_beta$weight_logic = df_beta$weight > 0
 
-fpath = paste(file.path(data_dir, paste("alpha2", ID, ".csv", sep = "")))
+fpath = paste("alpha2", ID, ".csv", sep = "")
 df_alpha = read.csv(fpath)
 df_alpha = as_tibble(df_alpha)
 

@@ -1,7 +1,0 @@
-server.R
-ui.R
-plotting_utils.R
-dynamic_ui_utils.R
-about.Rmd
-data/beta.csv
-data/alpha2.csv
