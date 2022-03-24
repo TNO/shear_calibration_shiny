@@ -15,7 +15,7 @@ source("plotting_utils.R")
 # =================================================================
 # Input and options
 # =================================================================
-ID = "_calibration_run_2022-Mar-23_21.54.27_base_1.5"
+ID = ""
 
 data_dir = "data"
 
@@ -75,9 +75,3 @@ g = alpha_chi1_ggplot(df_alpha, f_cck_ii, d_ii, rho_ii, load_comb_ii, chi2_ii,
 
 plot(g)
 
-
-l = c("c", "d", "c", "a", "a")
-df = tibble(b=l)
-
-factor(l, levels=c("a", "b", "c", "d"), labels=c("A", "B", "C", "D"))
-df$b = factor(df$b, levels=c("a", "b", "c", "d"), labels=c("A", "B", "C", "D"))
