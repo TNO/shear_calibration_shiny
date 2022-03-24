@@ -7,7 +7,7 @@ on:
 jobs:
   deploy-shiny:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/fix_deployment' && github.repository == 'TNO/shear_calibration_shiny'
+    # if: github.ref == 'refs/heads/fix_deployment' && github.repository == 'TNO/shear_calibration_shiny'
     
     steps:
       - uses: actions/checkout@v2
