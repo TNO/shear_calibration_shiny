@@ -11,7 +11,7 @@ sidebar <- dashboardSidebar(
   )
 )
 
-body <- dashboardBody(
+body <- dashboardBody( 
   tabItems(
     tabItem(tabName = "beta",
             fluidRow(
