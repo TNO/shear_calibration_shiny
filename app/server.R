@@ -4,7 +4,10 @@ library(magrittr)
 library(tibble)
 library(ggplot2)
 library(latex2exp)
+library(RColorBrewer)
 
+source("dynamic_ui_utils.R")
+source("plotting_utils.R")
 
 # An illustrative example
 ID = ""
@@ -12,8 +15,6 @@ ID = ""
 beta_t = 4.7
 
 data_dir = "data/"
-# variables = c('load_comb', 'rho', 'chi1', 'chi2') fpath = paste('beta', ID, '.csv',
-# sep = '') dfb = read.csv(fpath) dfb = as.tibble(dfb)
 
 
 shinyServer(function(input, output, session) {
@@ -26,11 +27,11 @@ shinyServer(function(input, output, session) {
         if (is.null(input$beta_csv)) {
             fpath = paste(data_dir, "beta", ID, ".csv", sep = "")
             df = read.csv(fpath)
-            df = as.tibble(df)
+            df = as_tibble(df)
 
         } else {
             df = read.csv(input$beta_csv$datapath)
-            df = as.tibble(df)
+            df = as_tibble(df)
         }
 
         df$load_comb = as.factor(df$load_comb)
@@ -51,64 +52,21 @@ shinyServer(function(input, output, session) {
 
         f_cck_ii = input$f_cck
         d_ii = input$d
-
-        df_b = df_beta()
-
-        df = data.frame(beta = df_b$beta, weight = df_b$weight, weight_logic = df_b$weight_logic)
-        df$hvar = df_b[[hvar]]
-
-        if (hfacet == "none") {
-            df$hfacet = "none"
+        
+        # handle the initialization of the dynamically generated UI (avoid 
+        # displaying errors)
+        if (is.null(f_cck_ii)){
+          g = NULL
         } else {
-            df$hfacet = as.factor(df_b[[hfacet]])
+          df_b = df_beta()
+          
+          g = beta_ggplot(
+            df_beta=df_b, hvar=hvar, hfacet=hfacet, vfacet=vfacet,
+            color=color, f_cck_ii=f_cck_ii, d_ii=d_ii)
         }
-
-        if (vfacet == "none") {
-            df$vfacet = "none"
-        } else {
-            df$vfacet = as.factor(df_b[[vfacet]])
-        }
-
-        if (color == "none") {
-            df$color = "none"
-        } else {
-            df$color = as.factor(df_b[[color]])
-        }
-
-        df$f_cck = as.factor(df_b$f_cck)
-        df$d = as.factor(df_b$d)
-
-        df = df %>%
-            filter(f_cck == f_cck_ii & d == d_ii)
-
-        # for overlay plot - indicate weight range (not the best solution)
-        dfw = df
-        idx = df$weight_logic
-        dfw = dfw[!idx, ]
-
-
-        g = ggplot(df, aes(x = hvar, y = beta, color = color))
-        g = g + geom_point(mapping = aes(size = weight), shape = 16, alpha = 0.7)
-        g = g + geom_path()
-        g = g + geom_hline(yintercept = beta_t)
-        g = g + facet_grid(vfacet ~ hfacet, labeller = label_both)
-        g = g + geom_point(data = dfw, color = "white", fill = "white", size = 1, stroke = 0)
-        g = g + scale_color_discrete(name = color)
-        g = g + scale_size_continuous(range = c(1.5, 4))
-
-        g = g + ggtitle(paste("f_cck = ", f_cck_ii, "; d = ", d_ii, sep = ""))
-
-        g = g + theme_bw()
-        g = g + theme(axis.text.x = element_text(angle = 90, hjust = 1))
-        g = g + ylab(TeX("$\\beta$"))
-        g = g + xlab(hvar)
-        g = g + xlim(c(0, 1))
-
 
         return(g)
     })
-
-
 
 
     # get the alpha csv file for plotting
@@ -116,12 +74,13 @@ shinyServer(function(input, output, session) {
         if (is.null(input$alpha_csv)) {
             fpath = paste(data_dir, "alpha2", ID, ".csv", sep = "")
             df = read.csv(fpath)
-            df = as.tibble(df)
+            df = as_tibble(df)
         } else {
             df = read.csv(input$alpha_csv$datapath)
-            df = as.tibble(df)
+            df = as_tibble(df)
         }
 
+        
         df$load_comb_r = as.factor(df$load_comb_r)
         df$f_cck_r = as.factor(df$f_cck_r)
         df$rho_r = as.factor(df$rho_r)
@@ -141,28 +100,21 @@ shinyServer(function(input, output, session) {
         load_comb_ii = input$load_comb_alpha
         chi2_ii = input$chi2_alpha
 
-        df_a = df_alpha()
-
-        df_chi1 = df_a %>%
-            filter(f_cck_r == f_cck_ii & d_r == d_ii & rho_r == rho_ii & chi2_r == chi2_ii &
-                load_comb_r == load_comb_ii)
-
-
-        df_chi1_new = data.frame(chi1_r = df_chi1$chi1_r, alpha2_r = df_chi1$alpha2_r, alpha_labels = df_chi1$alpha_labels)
-
-        df_chi1_new$chi1_r = as.numeric(as.character(df_chi1_new$chi1_r))
-
-        g = ggplot(df_chi1_new, aes(x = chi1_r, y = alpha2_r, fill = alpha_labels))
-        g = g + geom_area(alpha = 0.6, size = 1, colour = "black")
-        g = g + ggtitle(paste("f_cck = ", f_cck_ii, "; d = ", d_ii, "; rho = ", rho_ii, "; chi2 = ",
-            chi2_ii, "; load_comb = ", load_comb_ii, sep = ""))
-        g = g + xlab(TeX("$\\chi_1$"))
-        g = g + ylab(TeX("$\\alpha^2$"))
-        g = g + labs(fill = "RV's")
-        g = g + scale_fill_brewer(palette = "Paired")
-        g = g + theme(axis.text.x = element_text(angle = 90, hjust = 1))
-        g = g + scale_x_continuous(breaks = seq(0.1, 0.9, by = 0.1), expand = c(0, 0))
-        g = g + scale_y_continuous(limits = seq(0, 1), expand = c(0, 0))
+        # handle the initialization of the dynamically generated UI (avoid 
+        # displaying errors)
+        if (is.null(f_cck_ii)){
+          g = NULL
+        } else {
+          g = alpha_chi1_ggplot(
+            df_alpha = df_alpha(),
+            f_cck_ii = f_cck_ii,
+            d_ii = d_ii,
+            rho_ii = rho_ii,
+            load_comb_ii = load_comb_ii,
+            chi2_ii = chi2_ii,
+            combine_pos_neg = input$combine_to_e_r
+          )
+        }
 
         return(g)
     })
@@ -175,45 +127,37 @@ shinyServer(function(input, output, session) {
         load_comb_ii = input$load_comb_alpha
         chi1_ii = input$chi1_alpha
 
-        df_a = df_alpha()
-
-        df_chi2 = df_a %>%
-            filter(f_cck_r == f_cck_ii & d_r == d_ii & rho_r == rho_ii & chi1_r == chi1_ii &
-                load_comb_r == load_comb_ii)
-
-
-        df_chi2_new = data.frame(chi2_r = df_chi2$chi2_r, alpha2_r = df_chi2$alpha2_r, alpha_labels = df_chi2$alpha_labels)
-
-        df_chi2_new$chi2_r = as.numeric(as.character(df_chi2_new$chi2_r))
-
-        g = ggplot(df_chi2_new, aes(x = chi2_r, y = alpha2_r, fill = alpha_labels))
-        g = g + geom_area(alpha = 0.6, size = 1, colour = "black")
-        g = g + ggtitle(paste("f_cck = ", f_cck_ii, "; d = ", d_ii, "; rho = ", rho_ii, "; chi1 = ",
-            chi1_ii, "; load_comb = ", load_comb_ii, sep = ""))
-        g = g + xlab(TeX("$\\chi_2$"))
-        g = g + ylab(TeX("$\\alpha^2$"))
-        g = g + labs(fill = "RV's")
-        g = g + scale_fill_brewer(palette = "Paired")
-        g = g + theme(axis.text.x = element_text(angle = 90, hjust = 1))
-        g = g + scale_x_continuous(breaks = seq(0.1, 0.9, by = 0.1), expand = c(0, 0))
-        g = g + scale_y_continuous(limits = seq(0, 1), expand = c(0, 0))
+        # handle the initialization of the dynamically generated UI (avoid 
+        # displaying errors)
+        if (is.null(f_cck_ii)){
+          g = NULL
+        } else {
+          g = alpha_chi2_ggplot(
+            df_alpha = df_alpha(),
+            f_cck_ii = f_cck_ii,
+            d_ii = d_ii,
+            rho_ii = rho_ii,
+            load_comb_ii = load_comb_ii,
+            chi1_ii = chi1_ii,
+            combine_pos_neg = input$combine_to_e_r
+          )
+        }
 
         return(g)
     })
 
 
-    # ==================================================================== OBSERVER(S)
-    # - reactive endpoint(s)
+    # ==================================================================== 
+    # OBSERVER(S) - reactive endpoint(s)
     # ====================================================================
-
-    # observe({ hfacet = input$hfacet vfacet = input$vfacet choice1 = c('none',
-    # setdiff(variables, c(vfacet))) choice2 = c('none', setdiff(variables, c(hfacet)))
-    # updateSelectInput(session, 'hfacet', choices = choice1, selected = hfacet)
-    # updateSelectInput(session, 'vfacet', choices = choice2, selected = vfacet) })
 
     # Render beta plot
     output$beta_plot <- renderPlot({
-        beta_plot_gg()
+      validate(
+        need(!is.null(beta_plot_gg()), 'Initializing...')
+      )
+      
+      beta_plot_gg()
     })
 
     # Download beta plot
@@ -223,7 +167,11 @@ shinyServer(function(input, output, session) {
 
     # Render alpha-chi1 plot
     output$alphachi1_plot <- renderPlot({
-        alphachi1_plot_gg()
+      validate(
+        need(!is.null(alphachi1_plot_gg()), 'Initializing...')
+      )
+      
+      alphachi1_plot_gg()
     })
 
     # Download alpha-chi1 plot
@@ -234,7 +182,11 @@ shinyServer(function(input, output, session) {
 
     # Render alpha-chi2 plot
     output$alphachi2_plot <- renderPlot({
-        alphachi2_plot_gg()
+      validate(
+        need(!is.null(alphachi2_plot_gg()), 'Initializing...')
+      )
+      
+      alphachi2_plot_gg()
     })
 
     # Download alpha-chi2 plot
@@ -242,5 +194,61 @@ shinyServer(function(input, output, session) {
         content = function(file) {
             ggsave(file, plot = alphachi2_plot_gg(), device = "png", dpi = 600)
         })
+    
+    
+    # .................................................................
+    # Dynamic UI
+    # .................................................................
+    
+    # inputs to select design scenarios - beta tab
+    output$beta_parameters_input <- renderUI(
+        expr={
+          df = df_beta()
+          d_unique = unique(df$d)
+          f_cck_unique = unique(df$f_cck)
+          
+          s_d = parameter_input(x=d_unique, inputId="d", label="d [mm]:")
+          s_f_cck = parameter_input(
+            x=f_cck_unique, 
+            inputId="f_cck", 
+            label=HTML("<i>f</i><sub>cck</sub> [MPa]:")
+          )
+          
+          list(s_f_cck, s_d)
+        }
+    )
+    
+    # inputs to select design scenarios - alpha^2 tab
+    output$alpha_parameters_input <- renderUI(
+      expr={
+        df = df_alpha()
+        
+        load_comb_unique = unique(df$load_comb_r)
+        chi1_unique = unique(df$chi1_r)
+        chi2_unique = unique(df$chi2_r)
+        f_cck_unique = unique(df$f_cck_r)
+        d_unique = unique(df$d_r)
+        rho_unique = unique(df$rho_r)
+        
+        selected = load_comb_unique[round(length(load_comb_unique)/2 + 0.5)]
+        s_load_comb = selectInput(inputId="load_comb_alpha", label="load combination:", choices=load_comb_unique, selected=selected)
+        s_chi1 = parameter_input(x=chi1_unique, inputId="chi1_alpha", label=HTML("&chi;<sub>1</sub> [-]:"))
+        
+        # chi2 should only be available when two actions are present
+        s_chi2 = parameter_input(x=chi2_unique, inputId="chi2_alpha", label=HTML("&chi;<sub>2</sub> [-]:"))
+        cs_chi2 = conditionalPanel(
+          condition = "input.load_comb_alpha != 'traffic'",
+          s_chi2
+        )
+        
+        
+        s_f_cck = parameter_input(x=f_cck_unique, inputId="f_cck_alpha", label=HTML("<i>f</i><sub>cck</sub> [MPa]:"))
+        s_d = parameter_input(x=d_unique, inputId="d_alpha", label="d [mm]:")
+        s_rho = parameter_input(x=rho_unique, inputId="rho_alpha", label=HTML("<i>&rho;</i><sub>l</sub> [-]:"))
+        
+        list(s_load_comb, s_chi1, cs_chi2, s_f_cck, s_d, s_rho)
+      }
+    )
+    
 
 })

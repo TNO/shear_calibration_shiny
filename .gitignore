@@ -1,3 +1,7 @@
+*.csv
+!app/data/beta.csv
+!app/data/alpha2.csv
+
 # renv
 renv/
 !renv/activate.R

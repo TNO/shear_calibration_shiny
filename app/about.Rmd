@@ -5,7 +5,14 @@ output: html_document
 
 ## About
 
-Because we have more results than it could be put on a single plot.
+Interactive dashboard to visualize reliability-based calibration results. Because we have more 
+results than it could be put on a few plots.
+
+**Best viewed on larger screens (not on mobile phones).**
+
+Related links: 
+* <a href="https://github.com/TNO/shear_calibration_shiny" target="_blank">source code of this dashboard</a>.
+* <a href="https://github.com/TNO/shear_calibration" target="_blank">calibration code (to generate the results to be visualized)</a>.
 
 Created by:
 <div style="margin-left: 1em;">  
@@ -16,7 +23,13 @@ Created by:
 
 <p> Contact: 
 <script language="JavaScript">
-var username = "arpad.rozsas";
+var username = "rozsasarpi";
+var hostname = "gmail.com";
+var linktext = username + "@" + hostname ;
+document.write("<a href='" + "mail" + "to:" + username + "@" + hostname + "'>" + linktext + "</a>");
+</script>; 
+<script language="JavaScript">
+var username = "arthur.slobbe";
 var hostname = "tno.nl";
 var linktext = username + "@" + hostname ;
 document.write("<a href='" + "mail" + "to:" + username + "@" + hostname + "'>" + linktext + "</a>");

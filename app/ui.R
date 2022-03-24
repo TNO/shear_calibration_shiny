@@ -21,6 +21,7 @@ body <- dashboardBody(
                                accept = c("text/csv",
                                           "text/comma-separated-values,text/plain",
                                           ".csv")),
+                     h5(HTML("Select <a href='ttps://cfss.uchicago.edu/notes/grammar-of-graphics/' target='_blank'>aesthetics</a>:")),
                      selectInput(inputId = "hvar",
                                  label = "Horizontal variable",
                                  choices = list("chi1", "chi2"),
@@ -37,21 +38,19 @@ body <- dashboardBody(
                                  label = "Color",
                                  choices = list("none", "load_comb", "rho", "chi1", "chi2"),
                                  selected = "chi2"),
-                      selectInput(inputId = "f_cck",
-                                  label = "f_cck [MPa]:",
-                                  choices = list(30, 60, 80),
-                                  selected = 30),
-                     sliderInput(inputId = "d",
-                                 label = "d [mm]:",
-                                 min = 100,
-                                 max = 130,
-                                 step = 10,
-                                 value = 100),
-                     downloadButton('download_beta_plot', 'Download Plot')
+                  
+                     h5("Select design scenario parameters:"),
+                     # dynamically generated UI component, see the reactive endpoints of `server.R` 
+                     uiOutput("beta_parameters_input"),
+                     downloadButton('download_beta_plot', HTML('Download <i>&beta;</i> plot'))
               ),
               fluidRow(
-                box(width = 8, title="Reliability index plot",
-                       plotOutput(outputId = "beta_plot")
+                box(width = 8, title=HTML("Reliability index (<i>&beta;</i>) plot"),
+                       plotOutput(outputId = "beta_plot"),
+                       helpText(HTML("<ul>
+                                       <li>Dashed black line: target reliability (<i>&beta;</i><sub>target</sub>).</li>
+                                       <li>Empty circle: zero weight.</li>
+                                     </ul>"))  
                 )
               )
             )
@@ -64,46 +63,19 @@ body <- dashboardBody(
                                accept = c("text/csv",
                                           "text/comma-separated-values,text/plain",
                                           ".csv")),
-                    selectInput(inputId = "f_cck_alpha",
-                                label = "f_cck [MPa]:",
-                                choices = list(30, 60, 80),
-                                selected = 30),
-                    sliderInput(inputId = "d_alpha",
-                                label = "d [mm]:",
-                                min = 100,
-                                max = 130,
-                                step = 10,
-                                value = 100),   
-                     sliderInput(inputId = "rho_alpha",
-                                 label = "rho_s [-]:",
-                                 min = 0.005,
-                                 max = 0.015,
-                                 step = 0.005,
-                                 value = 0.01),
-                     selectInput(inputId = "load_comb_alpha",
-                                 label = "load combination:",
-                                 choices = list('traffic', 'snow_wind', 'snow_imposed', 'wind_imposed'),
-                                 selected = 'wind_imposed'),  
-                     sliderInput(inputId = "chi2_alpha",
-                                 label = "chi2 [-]:",
-                                 min = 0.0,
-                                 max = 0.9,
-                                 step = 0.1,
-                                 value = 0.3),
-                     downloadButton('download_alphachi1_plot', 'Download Plot 1'),      
-                     sliderInput(inputId = "chi1_alpha",
-                                 label = "chi1 [-]:",
-                                 min = 0.1,
-                                 max = 0.9,
-                                 step = 0.1,
-                                 value = 0.3),      
-                     downloadButton('download_alphachi2_plot', 'Download Plot 2')
+                     checkboxInput(inputId="combine_to_e_r", label=HTML("<b>Combine RVs into <i>E</i> and <i>R</i>.</b>"), value=FALSE),
+                     h5("Select design scenario parameters:"),
+                     # dynamically generated UI component, see the reactive endpoints of `server.R` 
+                     uiOutput("alpha_parameters_input"),
+
+                     downloadButton('download_alphachi1_plot', HTML('Download <i>&alpha;</i><sup>2</sup> - <i>&chi;</i><sub>1</sub> plot')), 
+                     downloadButton('download_alphachi2_plot', HTML('Download <i>&alpha;</i><sup>2</sup> - <i>&chi;</i><sub>2</sub> plot'))
               ),
               fluidRow(
-                box(width = 8, title="Squared sensitivity factor plots",
-                       HTML("<h3>&alpha;<sup>2</sup> - &chi;<sub>1</sub> plot (Plot 1)<h3>"),
+                box(width = 8, title=HTML("Squared sensitivity factor (<i>&alpha;</i><sup>2</sup>) plots"),
+                       HTML("<h3><i>&alpha;</i><sup>2</sup> - <i>&chi;</i><sub>1</sub> plot<h3>"),
                        plotOutput(outputId = "alphachi1_plot"),
-                       HTML("<h3>&alpha;<sup>2</sup> - &chi;<sub>2</sub> plot (Plot 2)<h3>"),
+                       HTML("<h3><i>&alpha;</i><sup>2</sup> - <i>&chi;</i><sub>2</sub> plot<h3>"),
                        plotOutput(outputId = "alphachi2_plot")
                 )
               )
