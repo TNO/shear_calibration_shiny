@@ -19,17 +19,18 @@ ID = ""
 
 show_title = FALSE
 dpi = 400
+data_dir = "data"
 
 # =================================================================
 # Pre-process
 # =================================================================
 
-fpath = paste("beta", ID, ".csv", sep = "")
+fpath = file.path(data_dir, paste("beta", ID, ".csv", sep = ""))
 df_beta = read.csv(fpath)
 df_beta = as_tibble(df_beta)
 df_beta$weight_logic = df_beta$weight > 0
 
-fpath = paste("alpha2", ID, ".csv", sep = "")
+fpath = fpath = file.path(data_dir, paste("alpha2", ID, ".csv", sep = ""))
 df_alpha = read.csv(fpath)
 df_alpha = as_tibble(df_alpha)
 
