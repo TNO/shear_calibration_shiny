@@ -27,11 +27,11 @@ shinyServer(function(input, output, session) {
         if (is.null(input$beta_csv)) {
             fpath = paste(data_dir, "beta", ID, ".csv", sep = "")
             df = read.csv(fpath)
-            df = as_tibble(df)
+            # df = as_tibble(df)
 
         } else {
             df = read.csv(input$beta_csv$datapath)
-            df = as_tibble(df)
+            # df = as_tibble(df)
         }
 
         df$load_comb = as.factor(df$load_comb)
