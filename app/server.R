@@ -14,18 +14,18 @@ ID = ""
 
 beta_t = 4.7
 
-data_dir = "data/"
+data_dir = "data"
 
 
 shinyServer(function(input, output, session) {
-    # ==================================================================== REACTIVE
-    # EXPRESSION(S) - reactive conductor(s)
+    # ==================================================================== 
+    # REACTIVE EXPRESSION(S) - reactive conductor(s)
     # ====================================================================
 
     # get the beta csv file for plotting
     df_beta <- reactive({
         if (is.null(input$beta_csv)) {
-            fpath = paste(data_dir, "beta", ID, ".csv", sep = "")
+            fpath = file.path(data_dir, paste("beta", ID, ".csv", sep = ""))
             df = read.csv(fpath)
             df = as_tibble(df)
 
@@ -34,7 +34,6 @@ shinyServer(function(input, output, session) {
             df = as_tibble(df)
         }
         
-        print(df)
         df$load_comb = as.factor(df$load_comb)
         df$f_cck = as.factor(df$f_cck)
         df$rho = as.factor(df$rho)
@@ -73,7 +72,7 @@ shinyServer(function(input, output, session) {
     # get the alpha csv file for plotting
     df_alpha <- reactive({
         if (is.null(input$alpha_csv)) {
-            fpath = paste(data_dir, "alpha2", ID, ".csv", sep = "")
+            fpath = file.path(data_dir, paste("alpha2", ID, ".csv", sep = ""))
             df = read.csv(fpath)
             df = as_tibble(df)
         } else {
