@@ -34,6 +34,7 @@ shinyServer(function(input, output, session) {
             df = as_tibble(df)
         }
         
+        print(df)
         df$load_comb = as.factor(df$load_comb)
         df$f_cck = as.factor(df$f_cck)
         df$rho = as.factor(df$rho)
@@ -80,7 +81,6 @@ shinyServer(function(input, output, session) {
             df = as_tibble(df)
         }
 
-        
         df$load_comb_r = as.factor(df$load_comb_r)
         df$f_cck_r = as.factor(df$f_cck_r)
         df$rho_r = as.factor(df$rho_r)
