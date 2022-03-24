@@ -11,7 +11,7 @@ sidebar <- dashboardSidebar(
   )
 )
 
-body <- dashboardBody(
+body <- dashboardBody(  
   tabItems(
     tabItem(tabName = "beta",
             fluidRow(
@@ -65,10 +65,10 @@ body <- dashboardBody(
                                           ".csv")),
                      checkboxInput(inputId="combine_to_e_r", label=HTML("<b>Combine RVs into <i>E</i> and <i>R</i>.</b>"), value=FALSE),
                      h5("Select design scenario parameters:"),
-                     # dynamically generated UI component, see the reactive endpoints of `server.R` 
+                     # dynamically generated UI component, see the reactive endpoints of `server.R`
                      uiOutput("alpha_parameters_input"),
 
-                     downloadButton('download_alphachi1_plot', HTML('Download <i>&alpha;</i><sup>2</sup> - <i>&chi;</i><sub>1</sub> plot')), 
+                     downloadButton('download_alphachi1_plot', HTML('Download <i>&alpha;</i><sup>2</sup> - <i>&chi;</i><sub>1</sub> plot')),
                      downloadButton('download_alphachi2_plot', HTML('Download <i>&alpha;</i><sup>2</sup> - <i>&chi;</i><sub>2</sub> plot'))
               ),
               fluidRow(

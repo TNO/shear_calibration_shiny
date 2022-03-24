@@ -15,23 +15,22 @@ source("plotting_utils.R")
 # =================================================================
 # Input and options
 # =================================================================
-ID = "_calibration_run_2022-Mar-23_21.54.27_base_1.5"
-
-data_dir = "data"
+ID = ""
 
 show_title = FALSE
 dpi = 400
+data_dir = "data"
 
 # =================================================================
 # Pre-process
 # =================================================================
 
-fpath = paste(file.path(data_dir, paste("beta", ID, ".csv", sep = "")))
+fpath = file.path(data_dir, paste("beta", ID, ".csv", sep = ""))
 df_beta = read.csv(fpath)
 df_beta = as_tibble(df_beta)
 df_beta$weight_logic = df_beta$weight > 0
 
-fpath = paste(file.path(data_dir, paste("alpha2", ID, ".csv", sep = "")))
+fpath = fpath = file.path(data_dir, paste("alpha2", ID, ".csv", sep = ""))
 df_alpha = read.csv(fpath)
 df_alpha = as_tibble(df_alpha)
 
@@ -75,9 +74,3 @@ g = alpha_chi1_ggplot(df_alpha, f_cck_ii, d_ii, rho_ii, load_comb_ii, chi2_ii,
 
 plot(g)
 
-
-l = c("c", "d", "c", "a", "a")
-df = tibble(b=l)
-
-factor(l, levels=c("a", "b", "c", "d"), labels=c("A", "B", "C", "D"))
-df$b = factor(df$b, levels=c("a", "b", "c", "d"), labels=c("A", "B", "C", "D"))
