@@ -91,10 +91,19 @@ prepare_aes <- function(df_target, df_source, aes_var_name, column_to_aes){
 
 beta_ggplot <- function(df_beta, hvar, hfacet, vfacet, color, f_cck_ii, d_ii, show_title = TRUE){
   
+  # variable to group by: to properly connect the points (not perfect)
+  if (hvar == "chi1"){
+    group_col = "chi2"
+  } else if (hvar == "chi2"){
+    group_col = "chi1"
+  } else {
+    group_col = "none"
+  }
+  
   # ...........................................
   # Create the to-be-visualized dataframe
   # ...........................................
-  df = tibble(beta = df_beta$beta, weight = df_beta$weight, weight_logic = df_beta$weight_logic)
+  df = tibble(beta = df_beta$beta, weight = df_beta$weight, weight_logic = df_beta$weight_logic, group = df_beta[[group_col]])
   
   # aesthetics
   df$hvar = df_beta[[hvar]]
@@ -140,7 +149,7 @@ beta_ggplot <- function(df_beta, hvar, hfacet, vfacet, color, f_cck_ii, d_ii, sh
   # ...........................................
   # Visualize
   # ...........................................
-  g = ggplot(df, aes(x = hvar, y = beta, color = color))
+  g = ggplot(df, aes(x = hvar, y = beta, color = color, group = group))
   g = g + geom_point(mapping = aes(size = weight), shape = 16, alpha = 0.7)
   g = g + geom_path()
   g = g + geom_hline(yintercept = beta_target, linetype="dashed")
