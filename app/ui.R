@@ -42,6 +42,14 @@ body <- dashboardBody(
                      h5("Select design scenario parameters:"),
                      # dynamically generated UI component, see the reactive endpoints of `server.R` 
                      uiOutput("beta_parameters_input"),
+                  
+                     checkboxInput(inputId="beta_plot_settings", label=HTML("<b>Settings for downloading plots.</b>"), value=FALSE),
+                     conditionalPanel(
+                       condition = "input.beta_plot_settings == 1",
+                       sliderInput(inputId = "width_beta", label = "Width [cm]", min = 10, max=60, value = 30, step = 5),
+                       sliderInput(inputId = "aspect_ratio_beta", label = "Width to height ratio", min = 0.5, max=6, value = 3, step = 0.5),
+                       sliderInput(inputId = "dpi_beta", label = "DPI", min = 100, max=1000, value = 400, step = 100),
+                     ),
                      downloadButton('download_beta_plot', HTML('Download <i>&beta;</i> plot'))
               ),
               fluidRow(
@@ -68,6 +76,13 @@ body <- dashboardBody(
                      # dynamically generated UI component, see the reactive endpoints of `server.R`
                      uiOutput("alpha_parameters_input"),
 
+                     checkboxInput(inputId="alpha2_plot_settings", label=HTML("<b>Settings for downloading plots.</b>"), value=FALSE),
+                     conditionalPanel(
+                       condition = "input.alpha2_plot_settings == 1",
+                       sliderInput(inputId = "width_alpha2", label = "Width [cm]", min = 10, max=60, value = 30, step = 5),
+                       sliderInput(inputId = "aspect_ratio_alpha2", label = "Width to height ratio", min = 0.5, max=6, value = 3, step = 0.5),
+                       sliderInput(inputId = "dpi_alpha2", label = "DPI", min = 100, max=1000, value = 400, step = 100),
+                     ),
                      downloadButton('download_alphachi1_plot', HTML('Download <i>&alpha;</i><sup>2</sup> - <i>&chi;</i><sub>1</sub> plot')),
                      downloadButton('download_alphachi2_plot', HTML('Download <i>&alpha;</i><sup>2</sup> - <i>&chi;</i><sub>2</sub> plot'))
               ),
