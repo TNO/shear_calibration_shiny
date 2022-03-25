@@ -158,8 +158,19 @@ shinyServer(function(input, output, session) {
     })
 
     # Download beta plot
-    output$download_beta_plot <- downloadHandler(filename = "my_beta_plot.png", content = function(file) {
-        ggsave(file, plot = beta_plot_gg(), device = "png", dpi = 600)
+    output$download_beta_plot <- downloadHandler(
+        filename = function() {
+          paste("beta_plot_", format(Sys.time(), "%Y-%b-%d_%H.%M.%S"), ".png", sep="")
+        }, 
+        content = function(file) {
+          units = "cm"
+          width = input$width_beta
+          height = width / input$aspect_ratio_beta
+          dpi = input$dpi_beta
+          
+          ggsave(
+            file, plot = beta_plot_gg(), device = "png", dpi = dpi,
+            width = width, height = height, units = "cm")
     })
 
     # Render alpha-chi1 plot
@@ -172,9 +183,19 @@ shinyServer(function(input, output, session) {
     })
 
     # Download alpha-chi1 plot
-    output$download_alphachi1_plot <- downloadHandler(filename = "my_alphachi1_plot.png",
+    output$download_alphachi1_plot <- downloadHandler(
+        filename = function() {
+          paste("alpha1_chi2_plot_", format(Sys.time(), "%Y-%b-%d_%H.%M.%S"), ".png", sep="")
+        },
         content = function(file) {
-            ggsave(file, plot = alphachi1_plot_gg(), device = "png", dpi = 600)
+          units = "cm"
+          width = input$width_alpha2
+          height = width / input$aspect_ratio_alpha2
+          dpi = input$dpi_alpha2
+          
+          ggsave(
+            file, plot = alphachi1_plot_gg(), device = "png", dpi = dpi,
+            width = width, height = height, units = "cm")
         })
 
     # Render alpha-chi2 plot
@@ -187,9 +208,19 @@ shinyServer(function(input, output, session) {
     })
 
     # Download alpha-chi2 plot
-    output$download_alphachi2_plot <- downloadHandler(filename = "my_alphachi2_plot.png",
+    output$download_alphachi2_plot <- downloadHandler(
+        filename = function () {
+          paste("alpha2_chi2_plot_", format(Sys.time(), "%Y-%b-%d_%H.%M.%S"), ".png", sep="")
+        },
         content = function(file) {
-            ggsave(file, plot = alphachi2_plot_gg(), device = "png", dpi = 600)
+            units = "cm"
+            width = input$width_alpha2
+            height = width / input$aspect_ratio_alpha2
+            dpi = input$dpi_alpha2
+            
+            ggsave(
+              file, plot = alphachi2_plot_gg(), device = "png", dpi = dpi,
+              width = width, height = height, units = "cm")
         })
     
     
