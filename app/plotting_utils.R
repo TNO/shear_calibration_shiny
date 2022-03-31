@@ -17,12 +17,12 @@ effect_resistance_df_labels = c("effect (alpha > 0)", "resistance (alpha < 0)")
 effect_resistance_legend_labels = c(TeX("$E$ ($\\alpha > 0$)"), TeX("$R$ ($\\alpha \\leq 0$)"))
 
 # must be harmonized with how Matlab saves the results! (`save_results_for_visu.m`)
-rv_df_labels = rev(c('C', 'f_cck', 'd', 'b', 'rho_s', 'G', 'KG', 'Q1', 'KQ1', 'Q2', 'KQ2', 'KE'))
+rv_df_labels = rev(c('theta_R', 'f_c', 'd', 'b', 'A_sl', 'G', 'theta_G', 'Q1', 'theta_Q1', 'Q2', 'theta_Q2', 'theta_E'))
 rv_legend_labels = rev(c(
-  TeX("$C_{R,c}$"), TeX("$f_{c}$"), TeX("$d$"), 
-  TeX("$b_{w}$"), TeX("$\\rho_{l}$"), TeX("$G$"),
-  TeX("$\\theta_G$"), TeX("$Q_1$"), TeX("$\\theta_{Q1}$"),
-  TeX("$Q_2$"), TeX("$\\theta_{Q2}$"), TeX("$\\theta_{E}$")
+  TeX("$\\theta_{R}$"), TeX("$f_{c}$"), TeX("$d$"), 
+  TeX("$b_{w}$"), TeX("$A_{sl}$"), TeX("$V_{G}$"),
+  TeX("$\\theta_G$"), TeX("$V_{Q1}$"), TeX("$\\theta_{Q1}$"),
+  TeX("$V_{Q2}$"), TeX("$\\theta_{Q2}$"), TeX("$\\theta_{E}$")
   ))
 
 rv_label_map <- function(x){
@@ -89,7 +89,10 @@ prepare_aes <- function(df_target, df_source, aes_var_name, column_to_aes){
 }
 
 
-beta_ggplot <- function(df_beta, hvar, hfacet, vfacet, color, f_cck_ii, d_ii, show_title = TRUE){
+beta_ggplot <- function(
+    df_beta, hvar, hfacet, vfacet, color, f_cck_ii, d_ii,
+    d_lower_ii, a_to_d_ratio_ii, show_title = TRUE
+    ){
   
   # variable to group by: to properly connect the points (not perfect)
   if (hvar == "chi1"){
@@ -114,9 +117,14 @@ beta_ggplot <- function(df_beta, hvar, hfacet, vfacet, color, f_cck_ii, d_ii, sh
   
   df$f_cck = as.factor(df_beta$f_cck)
   df$d = as.factor(df_beta$d)
+  df$d_lower = as.factor(df_beta$d_lower)
+  df$a_to_d_ratio = as.factor(df_beta$a_to_d_ratio)
   
   df = df %>%
-    filter(f_cck == f_cck_ii & d == d_ii)
+    filter(
+      f_cck == f_cck_ii & d == d_ii 
+      & d_lower == d_lower_ii & a_to_d_ratio == a_to_d_ratio_ii
+    )
   
   # Prepare the labels to be plotted
   if (vfacet != "none"){
@@ -159,7 +167,10 @@ beta_ggplot <- function(df_beta, hvar, hfacet, vfacet, color, f_cck_ii, d_ii, sh
   g = g + scale_size_continuous(range = c(1.5, 4), name=aes_label_map("weight"))
   
   if (show_title == TRUE){
-    g = g + ggtitle(paste("f_cck = ", f_cck_ii, "; d = ", d_ii, sep = ""))
+    g = g + ggtitle(paste(
+      "f_cck = ", f_cck_ii, "; d = ", d_ii, 
+      "; d_g = ", d_lower_ii, "; a/d = ", a_to_d_ratio_ii, sep = ""
+      ))
   }
   
   g = g + theme(axis.text.x = element_text(angle = 90, hjust = 1))
@@ -175,7 +186,10 @@ beta_ggplot <- function(df_beta, hvar, hfacet, vfacet, color, f_cck_ii, d_ii, sh
 # Alpha^2 - Chi plots
 # ..............................................................
 
-alpha_chi1_ggplot <- function(df_alpha, f_cck_ii, d_ii, rho_ii, load_comb_ii, chi2_ii, combine_pos_neg = TRUE, show_title = TRUE){
+alpha_chi1_ggplot <- function(
+    df_alpha, f_cck_ii, d_ii, rho_ii, d_lower_ii, a_to_d_ratio_ii,
+    load_comb_ii, chi2_ii, combine_pos_neg = TRUE, show_title = TRUE
+    ){
   
   # load combination
   load_1_name = strsplit(load_comb_ii, "_")[[1]][1]
@@ -185,7 +199,8 @@ alpha_chi1_ggplot <- function(df_alpha, f_cck_ii, d_ii, rho_ii, load_comb_ii, ch
   
   df_chi1 = df_alpha %>%
     filter(f_cck_r == f_cck_ii & d_r == d_ii & rho_r == rho_ii &
-             chi2_r == chi2_ii & load_comb_r == load_comb_ii)
+             chi2_r == chi2_ii & load_comb_r == load_comb_ii &
+             d_lower_r == d_lower_ii & a_to_d_ratio_r == a_to_d_ratio_ii)
   
   if (combine_pos_neg == TRUE){
     idx_pos = df_chi1$alpha_r >= 0
@@ -224,9 +239,11 @@ alpha_chi1_ggplot <- function(df_alpha, f_cck_ii, d_ii, rho_ii, load_comb_ii, ch
   g = g + geom_area(alpha = 0.6, size = 1, colour = "black")
   
   if (show_title) {
-    g = g + ggtitle(paste("f_ck = ", f_cck_ii, "; d = ", d_ii, "; rho = ",
-                          rho_ii, "; chi2 = ", chi2_ii, "; load_comb = ",
-                          load_comb_ii, sep = "")
+    g = g + ggtitle(paste("f_ck = ", f_cck_ii, "; d = ", d_ii,
+                          "; rho = ", rho_ii,  "; d_g = ", d_lower_ii, 
+                          "; a/d = ", a_to_d_ratio_ii,
+                          "; chi2 = ", chi2_ii, "; load_comb = ", load_comb_ii,
+                          sep = "")
                     )
   }
   
@@ -255,14 +272,18 @@ alpha_chi1_ggplot <- function(df_alpha, f_cck_ii, d_ii, rho_ii, load_comb_ii, ch
 
 
 
-alpha_chi2_ggplot <- function(df_alpha, f_cck_ii, d_ii, rho_ii, load_comb_ii, chi1_ii, combine_pos_neg = TRUE, show_title = TRUE){
+alpha_chi2_ggplot <- function(
+    df_alpha, f_cck_ii, d_ii, rho_ii, d_lower_ii, a_to_d_ratio_ii,
+    load_comb_ii, chi1_ii, combine_pos_neg = TRUE, show_title = TRUE
+    ){
   
   # load combination
   load_2_name = strsplit(load_comb_ii, "_")[[1]][2]
   
   df_chi2 = df_alpha %>%
     filter(f_cck_r == f_cck_ii & d_r == d_ii & rho_r == rho_ii & 
-             chi1_r == chi1_ii & load_comb_r == load_comb_ii)
+             chi1_r == chi1_ii & load_comb_r == load_comb_ii &
+             d_lower_r == d_lower_ii & a_to_d_ratio_r == a_to_d_ratio_ii)
 
   if (combine_pos_neg == TRUE){
     idx_pos = df_chi2$alpha_r >= 0
@@ -299,12 +320,13 @@ alpha_chi2_ggplot <- function(df_alpha, f_cck_ii, d_ii, rho_ii, load_comb_ii, ch
   g = g + geom_area(alpha = 0.6, size = 1, colour = "black")
   
   if (show_title) {
-    g = g + ggtitle(paste("f_ck = ", f_cck_ii, "; d = ", d_ii, "; rho = ",
-                          rho_ii, "; chi1 = ", chi1_ii, "; load_comb = ",
-                          load_comb_ii, sep = "")
+    g = g + ggtitle(paste("f_ck = ", f_cck_ii, "; d = ", d_ii,
+                          "; rho = ", rho_ii,  "; d_g = ", d_lower_ii, 
+                          "; a/d = ", a_to_d_ratio_ii,
+                          "; chi1 = ", chi1_ii, "; load_comb = ", load_comb_ii,
+                          sep = "")
     )
   }
-  
   if (combine_pos_neg == TRUE){
     g = g + geom_hline(yintercept=0.8^2, linetype="dashed")
     g = g + annotate("text", x=0.1+0.05, y=0.8^2+0.04, label=TeX("$\\alpha_{R,EC0}^{2} = 0.8^2$"))

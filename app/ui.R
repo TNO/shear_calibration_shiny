@@ -43,6 +43,7 @@ body <- dashboardBody(
                      # dynamically generated UI component, see the reactive endpoints of `server.R` 
                      uiOutput("beta_parameters_input"),
                   
+                     checkboxInput(inputId="plot_title_beta", label=HTML("<b>Show plot title.</b>"), value=TRUE),
                      checkboxInput(inputId="beta_plot_settings", label=HTML("<b>Settings for downloading plots.</b>"), value=FALSE),
                      conditionalPanel(
                        condition = "input.beta_plot_settings == 1",
@@ -76,6 +77,7 @@ body <- dashboardBody(
                      # dynamically generated UI component, see the reactive endpoints of `server.R`
                      uiOutput("alpha_parameters_input"),
 
+                     checkboxInput(inputId="plot_title_alpha", label=HTML("<b>Show plot title.</b>"), value=TRUE),
                      checkboxInput(inputId="alpha2_plot_settings", label=HTML("<b>Settings for downloading plots.</b>"), value=FALSE),
                      conditionalPanel(
                        condition = "input.alpha2_plot_settings == 1",

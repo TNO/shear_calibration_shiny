@@ -45,6 +45,8 @@ idx = 100
 
 f_cck_ii = df_beta$f_cck[idx]
 d_ii = df_beta$d[idx]
+d_lower_ii = df_beta$d_lower[idx]
+a_to_d_ratio_ii = df_beta$a_to_d_ratio[idx]
 hvar = "chi1"
 hfacet = "load_comb"
 vfacet = "rho"
@@ -52,7 +54,8 @@ color = "chi2"
 
 g = beta_ggplot(
   df_beta=df_beta, hvar=hvar, hfacet=hfacet, vfacet=vfacet,
-  color=color, f_cck_ii=f_cck_ii, d_ii=d_ii)
+  color=color, f_cck_ii=f_cck_ii, d_ii=d_ii, d_lower_ii=d_lower_ii,
+  a_to_d_ratio_ii=a_to_d_ratio_ii, show_title=show_title)
 
 plot(g)
 
@@ -69,8 +72,10 @@ chi2_ii = df_alpha$chi2_r[idx]
 
 combine_pos_neg = FALSE
 
-g = alpha_chi1_ggplot(df_alpha, f_cck_ii, d_ii, rho_ii, load_comb_ii, chi2_ii,
-                      combine_pos_neg = combine_pos_neg, show_title = show_title)
+g = alpha_chi1_ggplot(
+  df_alpha, f_cck_ii, d_ii, rho_ii, load_comb_ii, chi2_ii,
+  d_lower_ii=d_lower_ii, a_to_d_ratio_ii=a_to_d_ratio_ii,
+  combine_pos_neg = combine_pos_neg, show_title = show_title)
 
 plot(g)
 
