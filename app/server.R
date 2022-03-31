@@ -66,8 +66,9 @@ shinyServer(function(input, output, session) {
           
           g = beta_ggplot(
             df_beta=df_b, hvar=hvar, hfacet=hfacet, vfacet=vfacet,
-            color=color, f_cck_ii=f_cck_ii, d_ii=d_ii, d_lower_ii=d_lower_ii,
-            a_to_d_ratio_ii=a_to_d_ratio_ii, show_title=show_title)
+            color=color, f_cck_ii=f_cck_ii, d_ii=d_ii, rho_ii=NULL,
+            d_lower_ii=d_lower_ii, a_to_d_ratio_ii=a_to_d_ratio_ii,
+            show_title=show_title)
         }
 
         return(g)
