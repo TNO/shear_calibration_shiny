@@ -95,10 +95,10 @@
     },
     "crayon": {
       "Package": "crayon",
-      "Version": "1.5.0",
+      "Version": "1.5.1",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "741c2e098e98afe3dc26a7b0e5489f4e"
+      "Hash": "8dc45fd8a1ee067a92b85ef274e66d6a"
     },
     "curl": {
       "Package": "curl",
@@ -183,6 +183,18 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "5e0b1591bf8489cfacdb5aecf1697626"
+    },
+    "ggisoband": {
+      "Package": "ggisoband",
+      "Version": "0.0.0.9000",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "ggisoband",
+      "RemoteUsername": "clauswilke",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "eef779fb4e2c72084cca2eabdb1a582d5c9c23a8",
+      "Hash": "63166b8dfacaa6d6c1aab17efbc9ffdc"
     },
     "ggplot2": {
       "Package": "ggplot2",
@@ -291,10 +303,10 @@
     },
     "magrittr": {
       "Package": "magrittr",
-      "Version": "2.0.2",
+      "Version": "2.0.3",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "cdc87ecd81934679d1557633d8e1fe51"
+      "Hash": "7ce2733a9826b3aeb1775d56fd305472"
     },
     "markdown": {
       "Package": "markdown",
@@ -501,10 +513,10 @@
     },
     "vctrs": {
       "Package": "vctrs",
-      "Version": "0.3.8",
+      "Version": "0.4.0",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "ecf749a1b39ea72bd9b51b76292261f1"
+      "Hash": "95c2573b232eac82df562f9e300f9790"
     },
     "viridisLite": {
       "Package": "viridisLite",

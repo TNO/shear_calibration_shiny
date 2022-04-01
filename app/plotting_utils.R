@@ -307,7 +307,6 @@ alpha_chi1_ggplot <- function(
     axis.title.x = element_text(size = axis_label_text_size),
     axis.title.y = element_text(size = axis_label_text_size),
     panel.grid.minor = element_blank(),
-    legend.margin = margin(t = 0, unit='cm'),
     legend.text.align = 0,
   )
   g = g + scale_x_continuous(breaks = seq(0.1, 0.9, by = 0.1), expand = c(0, 0))
