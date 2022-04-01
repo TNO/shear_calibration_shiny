@@ -1,3 +1,6 @@
+app/results/
+!app/results/.gitkeep
+
 *.csv
 !app/data/beta.csv
 !app/data/alpha2.csv

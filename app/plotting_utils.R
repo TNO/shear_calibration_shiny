@@ -11,18 +11,19 @@ library(RColorBrewer)
 # --------------------------------------------------------------
 
 beta_target = 4.7
+axis_label_text_size = 14
 
 # order!
 effect_resistance_df_labels = c("effect (alpha > 0)", "resistance (alpha < 0)")
 effect_resistance_legend_labels = c(TeX("$E$ ($\\alpha > 0$)"), TeX("$R$ ($\\alpha \\leq 0$)"))
 
 # must be harmonized with how Matlab saves the results! (`save_results_for_visu.m`)
-rv_df_labels = rev(c('C', 'f_cck', 'd', 'b', 'rho_s', 'G', 'KG', 'Q1', 'KQ1', 'Q2', 'KQ2', 'KE'))
+rv_df_labels = rev(c('theta_R', 'f_c', 'd', 'b', 'A_sl', 'G', 'theta_G', 'Q1', 'theta_Q1', 'Q2', 'theta_Q2', 'theta_E'))
 rv_legend_labels = rev(c(
-  TeX("$C_{R,c}$"), TeX("$f_{c}$"), TeX("$d$"), 
-  TeX("$b_{w}$"), TeX("$\\rho_{l}$"), TeX("$G$"),
-  TeX("$\\theta_G$"), TeX("$Q_1$"), TeX("$\\theta_{Q1}$"),
-  TeX("$Q_2$"), TeX("$\\theta_{Q2}$"), TeX("$\\theta_{E}$")
+  TeX("$\\theta_{R}$"), TeX("$f_{c}$"), TeX("$d$"), 
+  TeX("$b_{w}$"), TeX("$A_{sl}$"), TeX("$V_{G}$"),
+  TeX("$\\theta_G$"), TeX("$V_{Q1}$"), TeX("$\\theta_{Q1}$"),
+  TeX("$V_{Q2}$"), TeX("$\\theta_{Q2}$"), TeX("$\\theta_{E}$")
   ))
 
 rv_label_map <- function(x){
@@ -32,10 +33,16 @@ rv_label_map <- function(x){
 
 
 # aesthetic mapping
+italic = TRUE
 aes_df_labels = c("beta", "chi1", "chi2", "rho", "weight", "load_comb")
 aes_legend_labels = c(
-  TeX("$\\beta$"), TeX("$\\chi_1$"), TeX("$\\chi_2$"), TeX("$\\rho$"),
-  TeX("$w$"), "load comb.")
+  TeX("$\\beta$", italic=italic), TeX("$\\chi_1$", italic=italic),
+  TeX("$\\chi_2$", italic=italic), TeX("$\\rho$", italic=italic),
+  TeX("$w$", italic=italic), "load comb.")
+
+# --------------------------------------------------------------
+# Supporting functions
+# --------------------------------------------------------------
 
 aes_label_map <- function(x){
   names(aes_legend_labels) <- aes_df_labels
@@ -69,11 +76,20 @@ facet_labeller <- function(facet_column_name, values){
   return(facet_labels)
 }
 
-axis_label_text_size = 14
+filter_if_not_null <- function(df_to_filter, filtering_column, filter_value){
+  if (is.null(filter_value) == TRUE) {
+    df = df_to_filter
+  } else {
+    df = df_to_filter%>% filter(
+      .data[[filtering_column]] == filter_value
+    )
+  }
+  return(df)
+}
 
-# --------------------------------------------------------------
+# ==============================================================
 # Functions
-# --------------------------------------------------------------
+# ==============================================================
 
 # ..............................................................
 # Beta facet plot
@@ -88,8 +104,22 @@ prepare_aes <- function(df_target, df_source, aes_var_name, column_to_aes){
   return(df_target)
 }
 
-
-beta_ggplot <- function(df_beta, hvar, hfacet, vfacet, color, f_cck_ii, d_ii, show_title = TRUE){
+beta_ggplot <- function(
+    df_beta, hvar, hfacet, vfacet, color, f_cck_ii, d_ii, rho_ii,
+    d_lower_ii, a_to_d_ratio_ii, show_title = TRUE
+    ){
+  ## Plot reliability indices (betas).
+  ##
+  ## If you want to facet along a variable that is also input parameter then you
+  ## can do that by proving it with `NULL` value). For example:
+  ##   * This will create vertical faceting but will have only a single `rho` 
+  ##     value (0.01):
+  ##       `beta_ggplot(...,vfacet="rho", rho_ii=0.01)`
+  ##   * This will create vertical faceting but with `rho` values in the 
+  ##     dataframe:
+  ##       `beta_ggplot(...,vfacet="rho", rho_ii=NULL)`
+  ##   * This will create not create vertical faceting:
+  ##       `beta_ggplot(...,vfacet="none", rho_ii=0.01)`
   
   # variable to group by: to properly connect the points (not perfect)
   if (hvar == "chi1"){
@@ -114,13 +144,24 @@ beta_ggplot <- function(df_beta, hvar, hfacet, vfacet, color, f_cck_ii, d_ii, sh
   
   df$f_cck = as.factor(df_beta$f_cck)
   df$d = as.factor(df_beta$d)
+  df$rho = as.factor(df_beta$rho)
+  df$d_lower = as.factor(df_beta$d_lower)
+  df$a_to_d_ratio = as.factor(df_beta$a_to_d_ratio)
   
-  df = df %>%
-    filter(f_cck == f_cck_ii & d == d_ii)
+  df = filter_if_not_null(df, "f_cck", f_cck_ii)
+  df = filter_if_not_null(df, "d", d_ii)
+  df = filter_if_not_null(df, "rho", rho_ii)
+  df = filter_if_not_null(df, "d_lower", d_lower_ii)
+  df = filter_if_not_null(df, "a_to_d_ratio", a_to_d_ratio_ii)
+
   
   # Prepare the labels to be plotted
-  if (vfacet != "none"){
+  if (vfacet == "none"){
+    facet_rows = NULL
+  } else {
+    facet_rows = ggplot2::vars(vfacet)
     vfacet_levels = unique(df$vfacet)
+    
     if (is.factor(vfacet_levels)){
       vfacet_levels = levels(vfacet_levels) 
     }
@@ -128,10 +169,15 @@ beta_ggplot <- function(df_beta, hvar, hfacet, vfacet, color, f_cck_ii, d_ii, sh
                         levels=vfacet_levels,
                         labels=facet_labeller(vfacet, vfacet_levels)
                         )
+    
   }
   
-  if (hfacet != "none"){
+  if (hfacet == "none"){
+    facet_cols = NULL 
+  } else {
+    facet_cols = ggplot2::vars(hfacet)
     hfacet_levels = unique(df$hfacet)
+    
     if (is.factor(hfacet_levels)){
       hfacet_levels = levels(hfacet_levels) 
     }
@@ -151,18 +197,26 @@ beta_ggplot <- function(df_beta, hvar, hfacet, vfacet, color, f_cck_ii, d_ii, sh
   # ...........................................
   g = ggplot(df, aes(x = hvar, y = beta, color = color, group = group))
   g = g + geom_point(mapping = aes(size = weight), shape = 16, alpha = 0.7)
-  g = g + geom_path()
+  g = g + geom_path(size=1)
   g = g + geom_hline(yintercept = beta_target, linetype="dashed")
-  g = g + facet_grid(vfacet ~ hfacet, labeller = label_parsed)
+  g = g + facet_grid(cols=facet_cols, rows=facet_rows, labeller = label_parsed)
   g = g + geom_point(data = dfw, color = "white", fill = "white", size = 1, stroke = 0)
-  g = g + scale_color_discrete(name = aes_label_map(color))
+  g = g + scale_color_brewer(palette = "RdYlGn", name = aes_label_map(color))
   g = g + scale_size_continuous(range = c(1.5, 4), name=aes_label_map("weight"))
   
   if (show_title == TRUE){
-    g = g + ggtitle(paste("f_cck = ", f_cck_ii, "; d = ", d_ii, sep = ""))
+    g = g + ggtitle(paste(
+      "f_cck = ", f_cck_ii, "; d = ", d_ii, 
+      "; d_g = ", d_lower_ii, "; a/d = ", a_to_d_ratio_ii, sep = ""
+      ))
   }
   
-  g = g + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+  g = g + theme(
+    axis.text.x = element_text(angle = 90, hjust = 1),
+    panel.grid.minor = element_blank(),
+    legend.position = "bottom",
+    
+  )
   g = g + ylab(TeX("$\\beta$"))
   g = g + xlab(aes_label_map(hvar))
   g = g + xlim(c(0, 1))
@@ -175,7 +229,10 @@ beta_ggplot <- function(df_beta, hvar, hfacet, vfacet, color, f_cck_ii, d_ii, sh
 # Alpha^2 - Chi plots
 # ..............................................................
 
-alpha_chi1_ggplot <- function(df_alpha, f_cck_ii, d_ii, rho_ii, load_comb_ii, chi2_ii, combine_pos_neg = TRUE, show_title = TRUE){
+alpha_chi1_ggplot <- function(
+    df_alpha, f_cck_ii, d_ii, rho_ii, d_lower_ii, a_to_d_ratio_ii,
+    load_comb_ii, chi2_ii, combine_pos_neg = TRUE, show_title = TRUE
+    ){
   
   # load combination
   load_1_name = strsplit(load_comb_ii, "_")[[1]][1]
@@ -185,7 +242,8 @@ alpha_chi1_ggplot <- function(df_alpha, f_cck_ii, d_ii, rho_ii, load_comb_ii, ch
   
   df_chi1 = df_alpha %>%
     filter(f_cck_r == f_cck_ii & d_r == d_ii & rho_r == rho_ii &
-             chi2_r == chi2_ii & load_comb_r == load_comb_ii)
+             chi2_r == chi2_ii & load_comb_r == load_comb_ii &
+             d_lower_r == d_lower_ii & a_to_d_ratio_r == a_to_d_ratio_ii)
   
   if (combine_pos_neg == TRUE){
     idx_pos = df_chi1$alpha_r >= 0
@@ -224,15 +282,18 @@ alpha_chi1_ggplot <- function(df_alpha, f_cck_ii, d_ii, rho_ii, load_comb_ii, ch
   g = g + geom_area(alpha = 0.6, size = 1, colour = "black")
   
   if (show_title) {
-    g = g + ggtitle(paste("f_ck = ", f_cck_ii, "; d = ", d_ii, "; rho = ",
-                          rho_ii, "; chi2 = ", chi2_ii, "; load_comb = ",
-                          load_comb_ii, sep = "")
+    g = g + ggtitle(paste("f_ck = ", f_cck_ii, "; d = ", d_ii,
+                          "; rho = ", rho_ii,  "; d_g = ", d_lower_ii, 
+                          "; a/d = ", a_to_d_ratio_ii,
+                          "; chi2 = ", chi2_ii, "; load_comb = ", load_comb_ii,
+                          sep = "")
                     )
   }
   
   if (combine_pos_neg == TRUE){
     g = g + geom_hline(yintercept=0.8^2, linetype="dashed")
-    g = g + annotate("text", x=0.1+0.05, y=0.8^2+0.04, label=TeX("$\\alpha_{R,EC0}^{2} = 0.8^2$"))
+    g = g + annotate("text", x=0.1+0.05, y=0.8^2+0.04,
+                     label=TeX("$\\alpha_{R,EC0}^{2} = 0.8^2$"), hjust=0)
   }
   g = g + scale_fill_manual(values=rv_colors, labels=fill_legend_labels)
   # g = g + scale_fill_manual(values=rv_colors)
@@ -245,6 +306,7 @@ alpha_chi1_ggplot <- function(df_alpha, f_cck_ii, d_ii, rho_ii, load_comb_ii, ch
     axis.text.x = element_text(angle = 90, hjust = 1),
     axis.title.x = element_text(size = axis_label_text_size),
     axis.title.y = element_text(size = axis_label_text_size),
+    panel.grid.minor = element_blank(),
     legend.text.align = 0,
   )
   g = g + scale_x_continuous(breaks = seq(0.1, 0.9, by = 0.1), expand = c(0, 0))
@@ -255,14 +317,18 @@ alpha_chi1_ggplot <- function(df_alpha, f_cck_ii, d_ii, rho_ii, load_comb_ii, ch
 
 
 
-alpha_chi2_ggplot <- function(df_alpha, f_cck_ii, d_ii, rho_ii, load_comb_ii, chi1_ii, combine_pos_neg = TRUE, show_title = TRUE){
+alpha_chi2_ggplot <- function(
+    df_alpha, f_cck_ii, d_ii, rho_ii, d_lower_ii, a_to_d_ratio_ii,
+    load_comb_ii, chi1_ii, combine_pos_neg = TRUE, show_title = TRUE
+    ){
   
   # load combination
   load_2_name = strsplit(load_comb_ii, "_")[[1]][2]
   
   df_chi2 = df_alpha %>%
     filter(f_cck_r == f_cck_ii & d_r == d_ii & rho_r == rho_ii & 
-             chi1_r == chi1_ii & load_comb_r == load_comb_ii)
+             chi1_r == chi1_ii & load_comb_r == load_comb_ii &
+             d_lower_r == d_lower_ii & a_to_d_ratio_r == a_to_d_ratio_ii)
 
   if (combine_pos_neg == TRUE){
     idx_pos = df_chi2$alpha_r >= 0
@@ -299,12 +365,13 @@ alpha_chi2_ggplot <- function(df_alpha, f_cck_ii, d_ii, rho_ii, load_comb_ii, ch
   g = g + geom_area(alpha = 0.6, size = 1, colour = "black")
   
   if (show_title) {
-    g = g + ggtitle(paste("f_ck = ", f_cck_ii, "; d = ", d_ii, "; rho = ",
-                          rho_ii, "; chi1 = ", chi1_ii, "; load_comb = ",
-                          load_comb_ii, sep = "")
+    g = g + ggtitle(paste("f_ck = ", f_cck_ii, "; d = ", d_ii,
+                          "; rho = ", rho_ii,  "; d_g = ", d_lower_ii, 
+                          "; a/d = ", a_to_d_ratio_ii,
+                          "; chi1 = ", chi1_ii, "; load_comb = ", load_comb_ii,
+                          sep = "")
     )
   }
-  
   if (combine_pos_neg == TRUE){
     g = g + geom_hline(yintercept=0.8^2, linetype="dashed")
     g = g + annotate("text", x=0.1+0.05, y=0.8^2+0.04, label=TeX("$\\alpha_{R,EC0}^{2} = 0.8^2$"))
@@ -319,6 +386,7 @@ alpha_chi2_ggplot <- function(df_alpha, f_cck_ii, d_ii, rho_ii, load_comb_ii, ch
     axis.text.x = element_text(angle = 90, hjust = 1),
     axis.title.x = element_text(size = axis_label_text_size),
     axis.title.y = element_text(size = axis_label_text_size),
+    panel.grid.minor = element_blank(),
     legend.text.align = 0,
   )
   g = g + scale_x_continuous(breaks = seq(0.1, 0.9, by = 0.1), expand = c(0, 0))
