@@ -17,7 +17,9 @@ source("plotting_utils.R")
 # =================================================================
 # Input and options
 # =================================================================
-ID = ""
+# ID = "_calibration_run_2022-Apr-02_16.02.38"
+# ID = "_calibration_run_2022-Apr-12_15.50.14"
+ID = "_calibration_run_2022-Apr-13_20.37.00"
 
 show_title = FALSE
 dpi = 400
@@ -44,7 +46,7 @@ df_alpha = as_tibble(df_alpha)
 # -----------------------------------------------------------------
 # beta facet plot
 # -----------------------------------------------------------------
-idx = 100
+# idx = 100
 
 # f_cck_ii = df_beta$f_cck[idx]
 # d_ii = df_beta$d[idx]
@@ -59,10 +61,10 @@ rho_ii = 0.01
 d_lower_ii = df_beta$d_lower[1]
 a_to_d_ratio_ii = df_beta$a_to_d_ratio[1]
 
-# hvar = "chi1"
-# color = "chi2"
-hvar = "chi2"
-color = "chi1"
+hvar = "chi1"
+color = "chi2"
+# hvar = "chi2"
+# color = "chi1"
 hfacet = "load_comb"
 vfacet = "none"
 
@@ -78,6 +80,37 @@ plot(g)
 width = 20
 height = 0.5 * width
 file = file.path(results_dir, paste("beta_plot", ID, ".png", sep=""))
+ggsave(
+  file, plot = g, device = "png", dpi = dpi,
+  width = width, height = height, units = "cm"
+)
+
+# -----------------------------------------------------------------
+# beta facet plot - mc2010 odd behavior
+# -----------------------------------------------------------------
+
+d_ii = 300
+rho_ii = 0.01
+d_lower_ii = df_beta$d_lower[1]
+a_to_d_ratio_ii = df_beta$a_to_d_ratio[1]
+
+hvar = "chi1"
+color = "chi2"
+hfacet = "load_comb"
+vfacet = "f_cck"
+
+
+g = beta_ggplot(
+  df_beta=df_beta, hvar=hvar, hfacet=hfacet, vfacet=vfacet,
+  color=color, f_cck_ii=NULL, d_ii=d_ii, rho_ii=rho_ii, d_lower_ii=d_lower_ii,
+  a_to_d_ratio_ii=a_to_d_ratio_ii, show_title=show_title)
+
+plot(g)
+
+# Save
+width = 20
+height = 1.2 * width
+file = file.path(results_dir, paste("beta_plot_fc_facet", ID, ".png", sep=""))
 ggsave(
   file, plot = g, device = "png", dpi = dpi,
   width = width, height = height, units = "cm"
@@ -214,7 +247,7 @@ g = g + scale_fill_viridis_c(
   breaks=alpha2_breaks,
 )
 
-if (rv_name != "R"){
+if (rv_name == "R"){
   g = g + stat_contour(breaks=c(0.8^2), color="black", linetype="dashed")
   
   g = g + annotate(

@@ -63,6 +63,9 @@ facet_label_map <- function(facet_column_name, value){
   } else if (facet_column_name == "rho"){
     value = signif(as.numeric(value), 2)
     facet_label = bquote(italic(rho[l])~": "~.(value))
+  } else if (facet_column_name == "f_cck"){
+    value = signif(as.numeric(value), 2)
+    facet_label = bquote(italic(f)[ck]~": "~.(value)~"MPa")
   } else stop("Unknown facet_column_name.")
   
   return(facet_label)
@@ -118,7 +121,7 @@ beta_ggplot <- function(
   ##   * This will create vertical faceting but with `rho` values in the 
   ##     dataframe:
   ##       `beta_ggplot(...,vfacet="rho", rho_ii=NULL)`
-  ##   * This will create not create vertical faceting:
+  ##   * This will create no vertical faceting:
   ##       `beta_ggplot(...,vfacet="none", rho_ii=0.01)`
   
   # variable to group by: to properly connect the points (not perfect)
