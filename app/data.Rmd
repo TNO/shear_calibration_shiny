@@ -1,0 +1,13 @@
+---
+title: "Data"
+output: html_document
+---
+
+## Data
+
+The data that comes with the online version of the dashboard corresponds to the calibrated EN1992-1-1 shear resistance model and RC2 reliability class (referred to as 
+case R1-1 in the accompanying paper).
+
+The results of this case and additional ones are available from <a href="https://drive.google.com/drive/folders/1zJ5dpPUn_EScw9_Pj24M8VOshZXCo_UE?usp=sharing" target="_blank">this folder</a>.
+
+For large input files you will need to run the dashboard locally (limitation of the free hosting service that we use): <a href="https://github.com/TNO/shear_calibration_shiny" target="_blank">source code of this dashboard</a>.

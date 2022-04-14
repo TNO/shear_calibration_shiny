@@ -8,10 +8,6 @@ output: html_document
 Interactive dashboard to visualize reliability-based calibration results. Because we have more 
 results than it could be put on a few plots.
 
-**The data comes with the dashboard corresponds to the calibrated EN1992-1-1 shear 
-resistance model and RC2 reliability class (referred to as case R1 in the
-accompanying paper).**
-
 **Best viewed on larger screens (not on mobile phones).**
 
 Related links: 

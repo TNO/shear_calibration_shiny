@@ -7,6 +7,7 @@ sidebar <- dashboardSidebar(
   sidebarMenu(id="tabs",
               menuItem(HTML("&beta; plots"), tabName = "beta", icon=icon("image"), selected = TRUE),
               menuItem(HTML("&alpha;<sup>2</sup> plots"), tabName = "alpha2", icon=icon("image")),
+              menuItem("Data", tabName = "data", icon = icon("database")),
               menuItem("About", tabName = "about", icon = icon("info"))
   )
 )
@@ -97,6 +98,9 @@ body <- dashboardBody(
                 )
               )
             )
+    ),
+    tabItem(tabName = "data",
+            includeMarkdown("data.Rmd")
     ),
     tabItem(tabName = "about",
             includeMarkdown("about.Rmd")
